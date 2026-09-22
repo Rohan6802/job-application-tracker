@@ -82,6 +82,7 @@ export const updateJob = async (
 
     const updatedJob = await Job.findByIdAndUpdate(id, jobUpdate, {
       new: true,
+      runValidators: true,
     });
     if (!updatedJob) {
       res.status(404).json({ message: `Job with Id ${id} does not exist` });
