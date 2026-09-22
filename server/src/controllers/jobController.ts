@@ -76,3 +76,20 @@ export const updateJob = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message || "server error" });
   }
 };
+
+export const deleteJob = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedJob = await Job.findByIdAndDelete(id);
+
+    if (!deletedJob) {
+      res.status(404).json({ message: `Job with Id ${id} not found` });
+      return;
+    }
+
+    res.status(200).json({ message: `Job with Id ${id} successfully deleted` });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message || "server error" });
+  }
+};
