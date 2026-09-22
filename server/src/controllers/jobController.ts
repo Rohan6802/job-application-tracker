@@ -57,3 +57,22 @@ export const getJobById = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message || "server error" });
   }
 };
+
+export const updateJob = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const jobUpdate = req.body;
+
+    const updatedJob = await Job.findByIdAndUpdate(id, jobUpdate, {
+      new: true,
+    });
+    if (!updatedJob) {
+      res.status(404).json({ message: `Job with Id ${id} does not exist` });
+      return;
+    }
+    res.status(200).json(updatedJob);
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message || "server error" });
+  }
+};
