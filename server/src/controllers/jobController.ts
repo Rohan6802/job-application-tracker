@@ -1,5 +1,7 @@
+import { MongooseError } from "mongoose";
 import Job from "../models/Job.js";
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 
 export const createJob = async (req: Request, res: Response) => {
   try {
@@ -42,9 +44,17 @@ export const getJobs = async (req: Request, res: Response) => {
   }
 };
 
-export const getJobById = async (req: Request, res: Response) => {
+export const getJobById = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: `Invalid Job Id ${id}` });
+      return;
+    }
     const job = await Job.findById(id);
 
     if (!job) {
@@ -58,9 +68,16 @@ export const getJobById = async (req: Request, res: Response) => {
   }
 };
 
-export const updateJob = async (req: Request, res: Response) => {
+export const updateJob = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: `Invalid Job Id ${id}` });
+      return;
+    }
     const jobUpdate = req.body;
 
     const updatedJob = await Job.findByIdAndUpdate(id, jobUpdate, {
@@ -77,9 +94,16 @@ export const updateJob = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteJob = async (req: Request, res: Response) => {
+export const deleteJob = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: `Invalid Job Id ${id}` });
+      return;
+    }
     const deletedJob = await Job.findByIdAndDelete(id);
 
     if (!deletedJob) {
