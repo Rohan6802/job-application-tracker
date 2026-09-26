@@ -1,9 +1,13 @@
 import { MongooseError } from "mongoose";
 import Job from "../models/Job.js";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 
-export const createJob = async (req: Request, res: Response) => {
+export const createJob = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const {
       company,
@@ -27,26 +31,28 @@ export const createJob = async (req: Request, res: Response) => {
     const savedJob = await newJob.save();
     res.status(201).json(savedJob);
   } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ error: error.message || "server error" });
+    next(error);
   }
 };
 
-export const getJobs = async (req: Request, res: Response) => {
+export const getJobs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const jobs = await Job.find();
 
     res.status(200).json(jobs);
   } catch (error: any) {
-    console.error(error);
-
-    res.status(500).json({ error: error.message || "server error" });
+    next(error);
   }
 };
 
 export const getJobById = async (
   req: Request<{ id: string }>,
   res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -63,14 +69,14 @@ export const getJobById = async (
     }
     res.status(200).json(job);
   } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ error: error.message || "server error" });
+    next(error);
   }
 };
 
 export const updateJob = async (
   req: Request<{ id: string }>,
   res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -90,14 +96,14 @@ export const updateJob = async (
     }
     res.status(200).json(updatedJob);
   } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ error: error.message || "server error" });
+    next(error);
   }
 };
 
 export const deleteJob = async (
   req: Request<{ id: string }>,
   res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -114,7 +120,6 @@ export const deleteJob = async (
 
     res.status(200).json({ message: `Job with Id ${id} successfully deleted` });
   } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ error: error.message || "server error" });
+    next(error);
   }
 };
