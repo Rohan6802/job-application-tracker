@@ -12,3 +12,13 @@ export interface Job {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CreateJobData {
+  company: string;
+  position: string;
+  status: JobStatus;
+  location?: string;
+  jobLink?: string;
+  applicationDate: string;
+  notes?: string;
+}
