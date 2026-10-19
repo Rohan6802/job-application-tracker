@@ -4,16 +4,19 @@ import type { CreateJobData, JobStatus } from "../types/job";
 interface JobFormProps {
   initialValues?: CreateJobData;
   onSubmit: (job: CreateJobData) => Promise<void>;
+  onCancel?: () => void;
 }
 
-const JobForm = ({ onSubmit, initialValues }: JobFormProps) => {
+const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
   const [formData, setFormData] = useState<CreateJobData>({
     company: initialValues?.company || "",
     position: initialValues?.position || "",
     status: initialValues?.status || "Applied",
     location: initialValues?.location || "",
     applicationDate:
-      initialValues?.applicationDate || new Date().toISOString().slice(0, 10),
+      initialValues?.applicationDate
+  ? initialValues.applicationDate.slice(0, 10)
+  : new Date().toISOString().slice(0, 10),
     jobLink: initialValues?.jobLink || "",
     notes: initialValues?.notes || "",
   });
@@ -34,6 +37,7 @@ const JobForm = ({ onSubmit, initialValues }: JobFormProps) => {
     try {
       await onSubmit(formData);
 
+      if (!initialValues) {
       setFormData({
         company: "",
         position: "",
@@ -43,6 +47,7 @@ const JobForm = ({ onSubmit, initialValues }: JobFormProps) => {
         jobLink: "",
         notes: "",
       });
+    }
     } catch (err: unknown) {
       setStatus((prev) => ({
         ...prev,
@@ -130,6 +135,11 @@ const JobForm = ({ onSubmit, initialValues }: JobFormProps) => {
       <button type="submit" disabled={status.loading}>
         {status.loading ? "Submitting..." : "Submit"}
       </button>
+      {initialValues && (
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
+      )}
     </form>
   );
 };

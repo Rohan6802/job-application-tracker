@@ -12,4 +12,15 @@ export const createJob = async (job: CreateJobData): Promise<Job> => {
   return response.data;
 };
 
-export default { getJobs, createJob };
+export const updateJob = async (
+  id: string,
+  job: CreateJobData,
+): Promise<Job> => {
+  const response = await axios.patch<Job>(`${API_URL}/${id}`, job);
+  return response.data;
+};
+
+export const deleteJob = async (id: string): Promise<void> => {
+  await axios.delete<void>(`${API_URL}/${id}`);
+};
+export default { getJobs, createJob, updateJob, deleteJob };

@@ -2,9 +2,11 @@ import type { Job } from "../types/job";
 
 interface JobCardProps {
   job: Job;
+  onEdit: (job: Job) => void;
+  onDelete: (job: Job) => void;
 }
 
-export const JobCard = ({ job }: JobCardProps) => {
+export const JobCard = ({ job, onEdit, onDelete }: JobCardProps) => {
   return (
     <div>
       <h3>Company: {job.company}</h3>
@@ -14,13 +16,12 @@ export const JobCard = ({ job }: JobCardProps) => {
       <p>
         Application Date: {new Date(job.applicationDate).toLocaleDateString()}
       </p>
-      {/* {job.jobLink && (
-        <p>
-          <a href={job.jobLink} target="_blank" rel="noopener noreferrer">
-            View Job Posting
-          </a>
-        </p>
-      )} */}
+      <button type="button" onClick={() => onEdit(job)}>
+        Edit
+      </button>
+      <button type="button" onClick={() => onDelete(job)}>
+        Delete
+      </button>
     </div>
   );
 };
