@@ -14,6 +14,7 @@ export const Dashboard = () => {
   const [edit, setEdit] = useState<Job | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const totalApplications = jobs.length;
 
@@ -32,6 +33,21 @@ export const Dashboard = () => {
     const statusMatches = statusFilter === "All" || job.status === statusFilter;
     return matchesSearchTerm && statusMatches;
   });
+
+  const sortedJobs = [...filteredJobs].sort((a, b) => {
+    if (sortOrder === "newest") {
+      return (
+        new Date(b.applicationDate).getTime() -
+        new Date(a.applicationDate).getTime()
+      );
+    } else {
+      return (
+        new Date(a.applicationDate).getTime() -
+        new Date(b.applicationDate).getTime()
+      );
+    }
+  });
+
   useEffect(() => {
     const fetchJobs = async () => {
       const fetchedJobs = await getJobs();
@@ -106,7 +122,16 @@ export const Dashboard = () => {
         <option value="Offer">Offer</option>
         <option value="Rejected">Rejected</option>
       </select>
-      {filteredJobs.map((job) => (
+      <label htmlFor="sort-order">Sort by Date:</label>
+      <select
+        id="sort-order"
+        value={sortOrder}
+        onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+      >
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+      {sortedJobs.map((job) => (
         <JobCard
           key={job._id}
           job={job}
