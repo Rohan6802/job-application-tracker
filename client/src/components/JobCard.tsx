@@ -8,18 +8,22 @@ interface JobCardProps {
 
 export const JobCard = ({ job, onEdit, onDelete }: JobCardProps) => {
   return (
-    <div>
-      <h3>Company: {job.company}</h3>
-      <p>Position: {job.position}</p>
-      <p>Status: {job.status}</p>
-      <p>Location: {job.location}</p>
-      <p>
+    <div className="job-card">
+      <h3 className="job-company">Company: {job.company}</h3>
+      <p className="job-position">Position: {job.position}</p>
+      <p className="job-status">Status: {job.status}</p>
+      <p className="job-location">Location: {job.location}</p>
+      <p className="job-date">
         Application Date: {new Date(job.applicationDate).toLocaleDateString()}
       </p>
-      <button type="button" onClick={() => onEdit(job)}>
+      <button className="edit-button" type="button" onClick={() => onEdit(job)}>
         Edit
       </button>
-      <button type="button" onClick={() => onDelete(job)}>
+      <button
+        className="delete-button"
+        type="button"
+        onClick={() => onDelete(job)}
+      >
         Delete
       </button>
     </div>

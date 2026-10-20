@@ -13,10 +13,9 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
     position: initialValues?.position || "",
     status: initialValues?.status || "Applied",
     location: initialValues?.location || "",
-    applicationDate:
-      initialValues?.applicationDate
-  ? initialValues.applicationDate.slice(0, 10)
-  : new Date().toISOString().slice(0, 10),
+    applicationDate: initialValues?.applicationDate
+      ? initialValues.applicationDate.slice(0, 10)
+      : new Date().toISOString().slice(0, 10),
     jobLink: initialValues?.jobLink || "",
     notes: initialValues?.notes || "",
   });
@@ -38,16 +37,16 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       await onSubmit(formData);
 
       if (!initialValues) {
-      setFormData({
-        company: "",
-        position: "",
-        status: "Applied",
-        location: "",
-        applicationDate: new Date().toISOString().slice(0, 10),
-        jobLink: "",
-        notes: "",
-      });
-    }
+        setFormData({
+          company: "",
+          position: "",
+          status: "Applied",
+          location: "",
+          applicationDate: new Date().toISOString().slice(0, 10),
+          jobLink: "",
+          notes: "",
+        });
+      }
     } catch (err: unknown) {
       setStatus((prev) => ({
         ...prev,
@@ -60,14 +59,13 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="job-form">
       {/* Error Banner */}
-      {status.error && (
-        <div style={{ color: "red", marginBottom: "1rem" }}>{status.error}</div>
-      )}
+      {status.error && <div className="error-message">{status.error}</div>}
 
       <label htmlFor="company-input">Company</label>
       <input
+        className="form-input"
         id="company-input"
         type="text"
         name="company"
@@ -77,6 +75,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       />
       <label htmlFor="position-input">Position</label>
       <input
+        className="form-input"
         id="position-input"
         type="text"
         name="position"
@@ -86,6 +85,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       />
       <label htmlFor="status-input">Status</label>
       <select
+        className="form-input"
         id="status-input"
         name="status"
         value={formData.status}
@@ -100,6 +100,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       </select>
       <label htmlFor="location-input">Location</label>
       <input
+        className="form-input"
         id="location-input"
         type="text"
         name="location"
@@ -108,6 +109,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       />
       <label htmlFor="applicationDate-input">Application Date</label>
       <input
+        className="form-input"
         id="applicationDate-input"
         type="date"
         name="applicationDate"
@@ -119,6 +121,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       />
       <label htmlFor="jobLink-input">Job Link</label>
       <input
+        className="form-input"
         id="jobLink-input"
         type="url"
         name="jobLink"
@@ -127,16 +130,17 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       />
       <label htmlFor="notes-input">Notes</label>
       <textarea
+        className="form-input"
         id="notes-input"
         name="notes"
         value={formData.notes}
         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
       />
-      <button type="submit" disabled={status.loading}>
+      <button className="submit-button" type="submit" disabled={status.loading}>
         {status.loading ? "Submitting..." : "Submit"}
       </button>
       {initialValues && (
-        <button type="button" onClick={onCancel}>
+        <button className="cancel-button" type="button" onClick={onCancel}>
           Cancel
         </button>
       )}

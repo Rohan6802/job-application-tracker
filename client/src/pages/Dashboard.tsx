@@ -80,57 +80,63 @@ export const Dashboard = () => {
     setJobs((currentJobs) => currentJobs.filter((j) => j._id !== job._id));
   };
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <div>
-        <h3>Total Applications</h3>
-        <p>{totalApplications}</p>
+    <div className="dashboard">
+      <h1 className="dashboard-title">Dashboard</h1>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <h3>Total Applications</h3>
+          <p>{totalApplications}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Applied</h3>
+          <p>{appliedCount}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Interview</h3>
+          <p>{interviewCount}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Offer</h3>
+          <p>{offerCount}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Rejected</h3>
+          <p>{rejectedCount}</p>
+        </div>
       </div>
-      <div>
-        <h3>Applied</h3>
-        <p>{appliedCount}</p>
+      <h2 className="section-title">Job Applications:</h2>
+      <div className="toolbar">
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Search by company or position"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <label htmlFor="status-filter">Filter by Status:</label>
+        <select
+          className="filter-select"
+          id="status-filter"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="All">All</option>
+          <option value="Applied">Applied</option>
+          <option value="Interview">Interview</option>
+          <option value="Offer">Offer</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <label htmlFor="sort-order">Sort by Date:</label>
+        <select
+          className="filter-select"
+          id="sort-order"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+        >
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
       </div>
-      <div>
-        <h3>Interview</h3>
-        <p>{interviewCount}</p>
-      </div>
-      <div>
-        <h3>Offer</h3>
-        <p>{offerCount}</p>
-      </div>
-      <div>
-        <h3>Rejected</h3>
-        <p>{rejectedCount}</p>
-      </div>
-
-      <h2>Job Applications:</h2>
-      <input
-        type="text"
-        placeholder="Search by company or position"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <label htmlFor="status-filter">Filter by Status:</label>
-      <select
-        id="status-filter"
-        value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
-      >
-        <option value="All">All</option>
-        <option value="Applied">Applied</option>
-        <option value="Interview">Interview</option>
-        <option value="Offer">Offer</option>
-        <option value="Rejected">Rejected</option>
-      </select>
-      <label htmlFor="sort-order">Sort by Date:</label>
-      <select
-        id="sort-order"
-        value={sortOrder}
-        onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
-      >
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-      </select>
       {sortedJobs.map((job) => (
         <JobCard
           key={job._id}
