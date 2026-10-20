@@ -139,7 +139,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
       <button className="submit-button" type="submit" disabled={status.loading}>
         {status.loading ? "Submitting..." : "Submit"}
       </button>
-      {initialValues && (
+      {onCancel && (
         <button className="cancel-button" type="button" onClick={onCancel}>
           Cancel
         </button>

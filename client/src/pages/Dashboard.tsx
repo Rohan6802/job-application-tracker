@@ -15,6 +15,7 @@ export const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
 
   const totalApplications = jobs.length;
 
@@ -60,10 +61,12 @@ export const Dashboard = () => {
   const handleCreateJob = async (jobData: CreateJobData) => {
     const newJob = await createJob(jobData);
     setJobs((currentJobs) => [newJob, ...currentJobs]);
+    setIsFormOpen(false);
   };
 
   const handleEditJob = async (job: Job) => {
     setEdit(job);
+    setIsFormOpen(true);
   };
   const handleUpdateJob = async (jobData: CreateJobData) => {
     if (!edit) return;
@@ -74,6 +77,7 @@ export const Dashboard = () => {
       currentJobs.map((job) => (job._id === updatedJob._id ? updatedJob : job)),
     );
     setEdit(null);
+    setIsFormOpen(false);
   };
   const handleDeleteJob = async (job: Job) => {
     await deleteJob(job._id);
@@ -82,6 +86,16 @@ export const Dashboard = () => {
   return (
     <div className="dashboard">
       <h1 className="dashboard-title">Dashboard</h1>
+      <button
+        type="button"
+        className="add-job-button"
+        onClick={() => {
+          setEdit(null);
+          setIsFormOpen(true);
+        }}
+      >
+        + Add Job Application
+      </button>
       <div className="stats-grid">
         <div className="stat-card">
           <h3>Total Applications</h3>
@@ -145,15 +159,29 @@ export const Dashboard = () => {
           onDelete={handleDeleteJob}
         />
       ))}
-      {edit ? (
-        <JobForm
-          key={edit._id}
-          initialValues={edit}
-          onSubmit={handleUpdateJob}
-          onCancel={() => setEdit(null)}
-        />
-      ) : (
-        <JobForm onSubmit={handleCreateJob} />
+      {isFormOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>{edit ? "Edit Application" : "Add Application"}</h2>
+
+            {edit ? (
+              <JobForm
+                key={edit._id}
+                initialValues={edit}
+                onSubmit={handleUpdateJob}
+                onCancel={() => {
+                  setEdit(null);
+                  setIsFormOpen(false);
+                }}
+              />
+            ) : (
+              <JobForm
+                onSubmit={handleCreateJob}
+                onCancel={() => setIsFormOpen(false)}
+              />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
