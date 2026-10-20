@@ -12,7 +12,26 @@ import JobForm from "../components/JobForm";
 export const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [edit, setEdit] = useState<Job | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("All");
 
+  const totalApplications = jobs.length;
+
+  const appliedCount = jobs.filter((job) => job.status === "Applied").length;
+  const interviewCount = jobs.filter(
+    (job) => job.status === "Interview",
+  ).length;
+  const offerCount = jobs.filter((job) => job.status === "Offer").length;
+  const rejectedCount = jobs.filter((job) => job.status === "Rejected").length;
+
+  const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearchTerm =
+      job.company.toLowerCase().includes(lowerCaseSearchTerm) ||
+      job.position.toLowerCase().includes(lowerCaseSearchTerm);
+    const statusMatches = statusFilter === "All" || job.status === statusFilter;
+    return matchesSearchTerm && statusMatches;
+  });
   useEffect(() => {
     const fetchJobs = async () => {
       const fetchedJobs = await getJobs();
@@ -47,8 +66,47 @@ export const Dashboard = () => {
   return (
     <div>
       <h1>Dashboard</h1>
+      <div>
+        <h3>Total Applications</h3>
+        <p>{totalApplications}</p>
+      </div>
+      <div>
+        <h3>Applied</h3>
+        <p>{appliedCount}</p>
+      </div>
+      <div>
+        <h3>Interview</h3>
+        <p>{interviewCount}</p>
+      </div>
+      <div>
+        <h3>Offer</h3>
+        <p>{offerCount}</p>
+      </div>
+      <div>
+        <h3>Rejected</h3>
+        <p>{rejectedCount}</p>
+      </div>
+
       <h2>Job Applications:</h2>
-      {jobs.map((job) => (
+      <input
+        type="text"
+        placeholder="Search by company or position"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <label htmlFor="status-filter">Filter by Status:</label>
+      <select
+        id="status-filter"
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+      >
+        <option value="All">All</option>
+        <option value="Applied">Applied</option>
+        <option value="Interview">Interview</option>
+        <option value="Offer">Offer</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+      {filteredJobs.map((job) => (
         <JobCard
           key={job._id}
           job={job}
