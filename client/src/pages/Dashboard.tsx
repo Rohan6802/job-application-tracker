@@ -16,6 +16,8 @@ export const Dashboard = () => {
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const totalApplications = jobs.length;
 
@@ -51,11 +53,21 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const fetchedJobs = await getJobs();
-      setJobs(fetchedJobs);
-    };
+      try {
+        setIsLoading(true);
+        setFetchError(null);
 
-    void fetchJobs();
+        const data = await getJobs();
+        setJobs(data);
+      } catch {
+        setFetchError(
+          "Failed to fetch job applications. Please check your connection and try again.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchJobs();
   }, []);
 
   const handleCreateJob = async (jobData: CreateJobData) => {
@@ -80,6 +92,10 @@ export const Dashboard = () => {
     setIsFormOpen(false);
   };
   const handleDeleteJob = async (job: Job) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the application for ${job.position} at ${job.company}?`,
+    );
+    if (!confirmed) return;
     await deleteJob(job._id);
     setJobs((currentJobs) => currentJobs.filter((j) => j._id !== job._id));
   };
@@ -151,14 +167,20 @@ export const Dashboard = () => {
           <option value="oldest">Oldest</option>
         </select>
       </div>
-      {sortedJobs.map((job) => (
-        <JobCard
-          key={job._id}
-          job={job}
-          onEdit={handleEditJob}
-          onDelete={handleDeleteJob}
-        />
-      ))}
+      {isLoading ? (
+        <p>Loading job applications...</p>
+      ) : fetchError ? (
+        <p className="error">{fetchError}</p>
+      ) : (
+        sortedJobs.map((job) => (
+          <JobCard
+            key={job._id}
+            job={job}
+            onEdit={handleEditJob}
+            onDelete={handleDeleteJob}
+          />
+        ))
+      )}
       {isFormOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
