@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { Job, CreateJobData } from "../types/job";
 
-const API_URL = "http://localhost:5000/api/jobs";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const getJobs = async (): Promise<Job[]> => {
   const response = await axios.get<Job[]>(API_URL);
