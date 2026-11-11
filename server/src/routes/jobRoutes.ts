@@ -1,4 +1,5 @@
 import express from "express";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 import {
   createJob,
   getJobs,
@@ -9,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.post("/", createJob);
-router.get("/", getJobs);
-router.get("/:id", getJobById);
-router.patch("/:id", updateJob);
-router.delete("/:id", deleteJob);
+router.post("/", authMiddleware, createJob);
+router.get("/", authMiddleware, getJobs);
+router.get("/:id", authMiddleware, getJobById);
+router.patch("/:id", authMiddleware, updateJob);
+router.delete("/:id", authMiddleware, deleteJob);
 
 export default router;
