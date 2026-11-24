@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SyntheticEvent } from "react";
 import type { CreateJobData, JobStatus } from "../types/job";
 
 interface JobFormProps {
@@ -27,7 +27,7 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
     error: null,
   });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (status.loading) return;
@@ -48,10 +48,14 @@ const JobForm = ({ onSubmit, initialValues, onCancel }: JobFormProps) => {
         });
       }
     } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to submit the job application.";
+
       setStatus((prev) => ({
         ...prev,
-        error:
-          (err as Error).message || "Failed to submit the job application.",
+        error: errorMessage,
       }));
     } finally {
       setStatus((prev) => ({ ...prev, loading: false }));

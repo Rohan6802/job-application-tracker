@@ -8,8 +8,10 @@ import {
 } from "../services/jobService";
 import JobCard from "../components/JobCard";
 import JobForm from "../components/JobForm";
+import { useAuth } from "../context/useAuth";
 
 export const Dashboard = () => {
+  const { token, user, logout } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [edit, setEdit] = useState<Job | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -53,11 +55,13 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const fetchJobs = async () => {
+      if (!token) return;
+
       try {
         setIsLoading(true);
         setFetchError(null);
 
-        const data = await getJobs();
+        const data = await getJobs(token);
         setJobs(data);
       } catch {
         setFetchError(
@@ -67,11 +71,14 @@ export const Dashboard = () => {
         setIsLoading(false);
       }
     };
+
     fetchJobs();
-  }, []);
+  }, [token]);
 
   const handleCreateJob = async (jobData: CreateJobData) => {
-    const newJob = await createJob(jobData);
+    if (!token) return;
+
+    const newJob = await createJob(jobData, token);
     setJobs((currentJobs) => [newJob, ...currentJobs]);
     setIsFormOpen(false);
   };
@@ -82,8 +89,9 @@ export const Dashboard = () => {
   };
   const handleUpdateJob = async (jobData: CreateJobData) => {
     if (!edit) return;
+    if (!token) return;
 
-    const updatedJob = await updateJob(edit._id, jobData);
+    const updatedJob = await updateJob(edit._id, jobData, token);
 
     setJobs((currentJobs) =>
       currentJobs.map((job) => (job._id === updatedJob._id ? updatedJob : job)),
@@ -96,12 +104,22 @@ export const Dashboard = () => {
       `Are you sure you want to delete the application for ${job.position} at ${job.company}?`,
     );
     if (!confirmed) return;
-    await deleteJob(job._id);
+    if (!token) return;
+    await deleteJob(job._id, token);
     setJobs((currentJobs) => currentJobs.filter((j) => j._id !== job._id));
   };
   return (
     <div className="dashboard">
-      <h1 className="dashboard-title">Dashboard</h1>
+      <div className="dashboard-header">
+        <div>
+          <h1 className="dashboard-title">Dashboard</h1>
+          <p>Welcome, {user?.name}</p>
+        </div>
+
+        <button type="button" onClick={logout}>
+          Logout
+        </button>
+      </div>
       <button
         type="button"
         className="add-job-button"
