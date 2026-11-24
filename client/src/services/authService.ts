@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const AUTH_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, "").replace(
+  /\/jobs$/,
+  "",
+);
+
+const AUTH_URL = `${API_BASE_URL}/auth`;
 
 export interface AuthUser {
   id: string;
