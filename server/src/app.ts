@@ -7,7 +7,14 @@ import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://job-application-tracker-nine-xi.vercel.app",
+    ],
+  }),
+);
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {
